@@ -1,0 +1,58 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+  <header>
+    <h2>Background Remover</h2>
+  </header>
+
+  <main class="container">
+    <form method="POST" enctype="multipart/form-data" id="upload-form">
+      {% csrf_token %}
+
+      <!-- Upload area -->
+      <div class="upload-area" id="upload-area">
+        <p>Drag and drop your image here, or click to select</p>
+        <input
+          type="file"
+          name="image"
+          id="file-input"
+          accept="image/*"
+          hidden
+        />
+      </div>
+
+      <!-- Submit button -->
+      <div class="form-group">
+        <button type="submit" class="submit-btn">Remove Background</button>
+      </div>
+
+      <!-- Display success message -->
+      {% if success_message %}
+      <div class="alert alert-success text-center">{{ success_message }}</div>
+      <div class="text-center">
+        <a href="{{ download_url }}" class="btn btn-primary" download>Download Image</a>
+      </div>
+      {% endif %}
+
+      <!-- Display error message -->
+      {% if error_message %}
+      <div class="alert alert-danger text-center">{{ error_message }}</div>
+      {% endif %}
+    </form>
+  </main>
+
+  <div class="container">
+    <p>ads here</p>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2>How to Remove Background?</h2>
+        <p>Click the “Choose Files” button to upload your image.</p>
+        <p>Click on the “Remove Background” button to process the image.</p>
+      </div>
+    </div>
+  </div>
+
+  {% endblock %}

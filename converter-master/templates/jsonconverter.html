@@ -1,0 +1,10 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% block content %}
+<h1>Convert JSON to CSV/XML</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Convert</button>
+    </form>
+    {%endblock %}

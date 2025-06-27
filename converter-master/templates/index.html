@@ -1,0 +1,117 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<!-- Converter Content -->
+        <div class="converter-container">
+            <div class="converter-header">
+                <h1>Image Format Converter</h1>
+                <p>Convert your images between different formats without losing quality. Supports JPG, PNG, WEBP, GIF and more.</p>
+            </div>
+            
+            <form method="POST" enctype="multipart/form-data" id="upload-form">
+                {% csrf_token %}
+                
+                <!-- Drag-and-drop area -->
+                <div class="upload-area" id="upload-area">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag and drop your image here, or</p>
+                    <div class="browse-btn">Browse Files</div>
+                    <input type="file" name="image" id="file-input" accept="image/*" hidden />
+                </div>
+                
+                <!-- Preview Area -->
+                <div class="preview-container">
+                    <div class="preview-box">
+                        <h3>Original Image</h3>
+                        <div class="preview-img" id="original-preview">
+                            <div class="placeholder">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        </div>
+                        <div class="file-info" id="original-info">No file selected</div>
+                    </div>
+                    
+                    <div class="preview-box">
+                        <h3>Converted Image</h3>
+                        <div class="preview-img" id="converted-preview">
+                            <div class="placeholder">
+                                <i class="fas fa-file-download"></i>
+                            </div>
+                        </div>
+                        <div class="file-info" id="converted-info">Converted file will appear here</div>
+                    </div>
+                </div>
+                
+                <!-- Format Selection -->
+                <div class="form-group">
+                    <label for="image-format">Select Output Format</label>
+                    <select name="format" id="image-format">
+                        <option value="jpg">JPG (JPEG Image)</option>
+                        <option value="jpeg">JPEG (Joint Photographic Experts Group)</option>
+                        <option value="png">PNG (Portable Network Graphics)</option>
+                        <option value="tiff">TIFF (Tagged Image File Format)</option>
+                        <option value="gif">GIF (Graphics Interchange Format)</option>
+                        <option value="webp" selected>WEBP (Web Picture Format)</option>
+                        <option value="bmp">BMP (Bitmap Image File)</option>
+                        <option value="heif">HEIF (High Efficiency Image Format)</option>
+                        <option value="heic">HEIC (High Efficiency Image Container)</option>
+                    </select>
+                </div>
+                
+                <!-- Convert Button -->
+                <div class="form-group">
+                    <button type="submit" class="submit-btn" id="submit-btn" disabled>
+                        <i class="fas fa-sync-alt"></i> Convert Image
+                    </button>
+                </div>
+                
+                <!-- Messages -->
+                {% if success_message %}
+                    <div class="message success">
+                        <i class="fas fa-check-circle"></i>
+                        <div>
+                            <h3>Conversion Successful!</h3>
+                            <p>{{ success_message }}</p>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <a href="{{ download_url }}" class="download-btn">
+                            <i class="fas fa-download"></i> Download Converted Image
+                        </a>
+                    </div>
+                {% endif %}
+                
+                {% if error_message %}
+                    <div class="message error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div>
+                            <h3>Conversion Error</h3>
+                            <p>{{ error_message }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </form>
+            
+            <!-- Features Section -->
+            <div class="features">
+                <div class="feature-card">
+                    <i class="fas fa-upload"></i>
+                    <h3>Upload Your Files</h3>
+                    <p>Click the "Browse Files" button to upload your image files. You can upload multiple files for batch conversion.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-cogs"></i>
+                    <h3>Select Target Format</h3>
+                    <p>Select your desired image format from the drop-down list. JPG, PNG, and other popular formats are supported.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-file-download"></i>
+                    <h3>Download Results</h3>
+                    <p>Click "Convert" to begin the image conversion. Our tool ensures high-quality conversion with the best compression.</p>
+                </div>
+            </div>
+        </div>
+
+        {% endblock %}

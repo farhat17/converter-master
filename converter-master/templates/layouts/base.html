@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Format Converter | MediaTools</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --dark: #1a1a2e;
+            --darker: #0d0d1a;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #4ade80;
+            --warning: #facc15;
+            --error: #f87171;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            min-height: 100vh;
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Navbar styles */
+        nav {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 0 0 20px 20px;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.4s ease;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #fff;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .logo i {
+            color: var(--accent);
+            font-size: 2.2rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            position: relative;
+            padding: 8px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #fff;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .cta-button {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(67, 97, 238, 0.6);
+        }
+        
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+        
+        /* Main Content Block */
+        .converter-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .converter-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .converter-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--accent), #f72585);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .converter-header p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed rgba(50, 163, 219, 0.2);
+            border-radius: 1rem;
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--accent);
+            background: rgba(76, 201, 240, 0.05);
+        }
+        
+        .upload-area.drag-over {
+            border-color: var(--success);
+            background: rgba(76, 201, 240, 0.1);
+        }
+        
+        .upload-area i {
+            font-size: 3.5rem;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .upload-area p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area .browse-btn {
+            display: inline-block;
+            padding: 10px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent);
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .upload-area .browse-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Preview Section */
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
+        .preview-box {
+            text-align: center;
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .preview-box h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .preview-img {
+            width: 100%;
+            max-width: 300px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0 auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .preview-img img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .preview-img .placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 3rem;
+        }
+        
+        .file-info {
+            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        
+        .form-group select {
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-size: 1rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234cc9f0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.2);
+        }
+        
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(67, 97, 238, 0.6);
+        }
+        
+        .submit-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Messages */
+        .message {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .message.success {
+            background: rgba(76, 175, 80, 0.15);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            color: #a5d6a7;
+        }
+        
+        .message.error {
+            background: rgba(244, 67, 54, 0.15);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            color: #ffab91;
+        }
+        
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: linear-gradient(90deg, var(--success), #2e7d32);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(46, 125, 50, 0.4);
+        }
+        
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 60px 0 30px;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--accent);
+        }
+        
+        .feature-card i {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            background: rgba(76, 201, 240, 0.1);
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 0 30px;
+            margin-top: 60px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--primary));
+            border-radius: 10px;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .footer-links a:hover {
+            color: var(--accent);
+            transform: translateX(5px);
+        }
+        
+        .footer-links a i {
+            margin-right: 10px;
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: rgba(26, 26, 46, 0.95);
+                backdrop-filter: blur(10px);
+                flex-direction: column;
+                justify-content: center;
+                gap: 40px;
+                transition: right 0.5s ease;
+                z-index: 100;
+                box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+                border-left: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+                z-index: 101;
+            }
+            
+            .converter-container {
+                padding: 30px 20px;
+            }
+            
+            .converter-header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            nav {
+                padding: 15px 20px;
+            }
+            
+            .logo span {
+                display: none;
+            }
+        }
+
+        .form-group{
+            display:flex;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <a href="#" class="logo">
+                <i class="fas fa-tools"></i>
+                <span>MediaTools</span>
+            </a>
+            
+            <div class="nav-links">
+                <a href="{% url 'resizer' %}">Home</a>
+                <a href="{% url 'resizer' %}">Resizer</a>
+                <a href="{% url 'compress_files' %}">Compress</a>
+                <a href="{% url 'remove-background' %}">Remove BG</a>
+                <a href="{% url 'qr_generator' %}"> Generate Qr</a>
+                <a href="{% url 'convert_json' %}"> Json</a>
+                
+                <a href="{% url 'beautify_json' %}"> Beautify Json</a>
+                
+                <!-- <button class="cta-button">Get Started</button> -->
+            </div>
+            
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </nav>
+        
+        {% block content %} {% endblock %} 
+        
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <h3>Image Tools</h3>
+                        <ul class="footer-links">
+                            <li><a href="#image-tools"><i class="fas fa-chevron-right"></i> Image Tools</a></li>
+                            <li><a href="#image-resizer"><i class="fas fa-chevron-right"></i> Image Resizer</a></li>
+                            <li><a href="#bulk-image-resizer"><i class="fas fa-chevron-right"></i> Bulk Image Resizer</a></li>
+                            <li><a href="#compressor"><i class="fas fa-chevron-right"></i> Image Compressor</a></li>
+                            <li><a href="#collage-maker"><i class="fas fa-chevron-right"></i> Collage Maker</a></li>
+                            <li><a href="#crop-image"><i class="fas fa-chevron-right"></i> Crop Image</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h3>PDF Tools</h3>
+                        <ul class="footer-links">
+                            <li><a href="#pdf-tools"><i class="fas fa-chevron-right"></i> PDF Tools</a></li>
+                            <li><a href="#compress-pdf"><i class="fas fa-chevron-right"></i> Compress PDF</a></li>
+                            <li><a href="#pdf-converter"><i class="fas fa-chevron-right"></i> PDF Converter</a></li>
+                            <li><a href="#image-to-pdf"><i class="fas fa-chevron-right"></i> Image to PDF</a></li>
+                            <li><a href="#pdf-to-gif"><i class="fas fa-chevron-right"></i> PDF to GIF</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h3>Mobile Tools</h3>
+                        <ul class="footer-links">
+                            <li><a href="#android-image-converter"><i class="fas fa-chevron-right"></i> Android Image Converter</a></li>
+                            <li><a href="#ios-image-converter"><i class="fas fa-chevron-right"></i> iOS Image Converter</a></li>
+                            <li><a href="#android-collage-maker"><i class="fas fa-chevron-right"></i> Android Collage Maker</a></li>
+                            <li><a href="#ios-collage-maker"><i class="fas fa-chevron-right"></i> iOS Collage Maker</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <ul class="footer-links">
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> About Us</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Contact</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Privacy Policy</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Terms of Service</a></li>
+                            <li><a href="#"><i class="fas fa-chevron-right"></i> Blog</a></li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="copyright">
+                    <p>&copy; 2023 MediaTools. All rights reserved. | Designed with <i class="fas fa-heart" style="color:#f72585;"></i> for creators</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !menuToggle.contains(e.target) && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                menuToggle.querySelector('i').classList.remove('fa-times');
+                menuToggle.querySelector('i').classList.add('fa-bars');
+            }
+        });
+        
+        // File Upload Functionality
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const originalPreview = document.getElementById('original-preview');
+        const convertedPreview = document.getElementById('converted-preview');
+        const originalInfo = document.getElementById('original-info');
+        const convertedInfo = document.getElementById('converted-info');
+        
+        // Click on upload area
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // Browse button
+        uploadArea.querySelector('.browse-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+        
+        // File input change
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Validate file type
+                if (!file.type.match('image.*')) {
+                    alert('Please select an image file (jpg, png, gif, etc.)');
+                    return;
+                }
+                
+                // Update preview
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    originalPreview.innerHTML = `<img src="${e.target.result}" alt="Original Image">`;
+                    originalInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                    
+                    // Enable submit button
+                    submitBtn.disabled = false;
+                    
+                    // Reset converted preview
+                    convertedPreview.innerHTML = '<div class="placeholder"><i class="fas fa-file-download"></i></div>';
+                    convertedInfo.textContent = 'Converted file will appear here';
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('drag-over');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.remove('drag-over');
+            });
+        });
+        
+        uploadArea.addEventListener('drop', handleDrop);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            
+            if (file && file.type.match('image.*')) {
+                fileInput.files = dt.files;
+                
+                // Trigger change event
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            } else {
+                alert('Please drop an image file');
+            }
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Form submission animation
+        const form = document.getElementById('upload-form');
+        form.addEventListener('submit', function() {
+            if (fileInput.files.length > 0) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
+                submitBtn.disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

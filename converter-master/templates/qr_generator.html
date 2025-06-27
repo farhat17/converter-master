@@ -1,0 +1,89 @@
+{% extends 'layouts/base.html' %}
+{% block content %}
+<style>
+    .qr-preview { 
+        max-width: 300px; 
+        margin: 2rem auto;
+        transition: all 0.3s ease;
+    }
+    .form-section { display: none; }
+    .form-section.active { display: block; }
+    .color-input::-webkit-color-swatch { border: none; border-radius: 50%; }
+</style>
+<div class="container py-5">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Custom QR Code Generator</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-4">
+                    <h4>Content Type</h4>
+                    <div class="d-flex gap-3">
+                        {% for choice in form.content_type %}
+                            {{ choice.tag }}
+                            <label class="btn btn-outline-primary" for="{{ choice.id_for_label }}">
+                                {{ choice.choice_label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Dynamic form sections -->
+                <div class="form-section" data-type="website">
+                    {{ form.url}}
+                </div>
+
+                <div class="form-section" data-type="vcard">
+                    {{ form.name}}
+                    {{ form.company}}
+                    {{ form.phone}}
+                    {{ form.email}}
+                </div>
+
+                <div class="form-section" data-type="wifi">
+                    {{ form.ssid}}
+                    {{ form.encryption }}
+                    {{ form.password}}
+                </div>
+
+                <div class="mt-4">
+                    <h4>Design Options</h4>
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form.color.label_tag }}
+                            {{ form.color }}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.logo.label_tag }}
+                            {{ form.logo }}
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg mt-4">
+                    Generate QR Code
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Show/hide form sections based on selected content type
+    document.querySelectorAll('[name="content_type"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            document.querySelectorAll('.form-section').forEach(section => {
+                section.classList.remove('active');
+                if (section.dataset.type === radio.value) {
+                    section.classList.add('active');
+                }
+            });
+        });
+    });
+</script>
+
+
+{% endblock %}
