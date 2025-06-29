@@ -622,3 +622,35 @@ def ai_generate_content(request):
 
 def beautiy_json(request):
     return render(request,'jsonbeautifier.html')
+
+def resume_builder(request):
+    return render(request, 'resume.html')
+
+    if request.method == 'POST':
+        form = UploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            json_file = request.FILES['json_file']
+            
+            # Security checks
+            if json_file.size > MAX_FILE_SIZE:
+                return HttpResponseBadRequest("File size exceeds 1MB limit")
+            if not json_file.name.lower().endswith('.json'):
+                return HttpResponseBadRequest("Invalid file type")
+
+            try:
+                # Read and parse JSON securely
+                data = json.load(json_file)
+            except json.JSONDecodeError:
+                return HttpResponseBadRequest("Invalid JSON format")
+            
+            # Normalize data to list of dictionaries
+            if not isinstance(data, list):
+                data = [data]
+
+            # Process the resume data and render the template
+            return render(request, 'resume.html', {'data': data})
+
+    else:
+        form = UploadForm()
+    
+    return render(request, 'resume.html', {'form': form})

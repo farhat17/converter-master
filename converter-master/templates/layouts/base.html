@@ -6,6 +6,7 @@
     <title>Image Format Converter | MediaTools</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary: #4361ee;
@@ -32,6 +33,7 @@
             min-height: 100vh;
             color: var(--light);
             overflow-x: hidden;
+            padding:20px;
         }
         
         .container {
@@ -604,6 +606,7 @@
                             <li><a href="#pdf-converter"><i class="fas fa-chevron-right"></i> PDF Converter</a></li>
                             <li><a href="#image-to-pdf"><i class="fas fa-chevron-right"></i> Image to PDF</a></li>
                             <li><a href="#pdf-to-gif"><i class="fas fa-chevron-right"></i> PDF to GIF</a></li>
+                            <li><a href="{% url 'resume_builder' %}"><i class="fas fa-chevron-right"></i> Resume Maker</a></li>
                         </ul>
                     </div>
                     

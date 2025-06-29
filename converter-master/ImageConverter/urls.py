@@ -14,6 +14,7 @@ urlpatterns = [
     # path('already-subscribed/', views.already_subscribed, name='already_subscribed'),
     path('jsonconverter/', views.convert_json, name='convert_json'),
     path('jsonbeautifier/', views.beautiy_json, name='beautify_json'),
+    path('resume/', views.resume_builder, name='resume_builder'),
 
     #  path("aicontent/", views.ai_generate_content, name="ai_generate"),
     path('qr-generator/', views.generate_qr, name='qr_generator'),
