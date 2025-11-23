@@ -10,7 +10,7 @@ from .models import UserProfile
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .models import UserProfile
-from docx import Document
+# from docx import Document
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import pandas as pd
