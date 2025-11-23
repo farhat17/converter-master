@@ -1,6 +1,136 @@
-// Get the necessary elements
-const uploadArea = document.getElementById('upload-area');
-const fileInput = document.getElementById('file-input');
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            if (navLinks.classList.contains('active')) {
+                icon.classList.remove('fa-bars');
+                icon.classList.add('fa-times');
+            } else {
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            }
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !menuToggle.contains(e.target) && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+                menuToggle.querySelector('i').classList.remove('fa-times');
+                menuToggle.querySelector('i').classList.add('fa-bars');
+            }
+        });
+        
+        // File Upload Functionality
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const originalPreview = document.getElementById('original-preview');
+        const convertedPreview = document.getElementById('converted-preview');
+        const originalInfo = document.getElementById('original-info');
+        const convertedInfo = document.getElementById('converted-info');
+        
+        // Click on upload area
+        uploadArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // Browse button
+        uploadArea.querySelector('.browse-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+        
+        // File input change
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const file = this.files[0];
+                
+                // Validate file type
+                if (!file.type.match('image.*')) {
+                    alert('Please select an image file (jpg, png, gif, etc.)');
+                    return;
+                }
+                
+                // Update preview
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    originalPreview.innerHTML = `<img src="${e.target.result}" alt="Original Image">`;
+                    originalInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                    
+                    // Enable submit button
+                    submitBtn.disabled = false;
+                    
+                    // Reset converted preview
+                    convertedPreview.innerHTML = '<div class="placeholder"><i class="fas fa-file-download"></i></div>';
+                    convertedInfo.textContent = 'Converted file will appear here';
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.add('drag-over');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, () => {
+                uploadArea.classList.remove('drag-over');
+            });
+        });
+        
+        uploadArea.addEventListener('drop', handleDrop);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const file = dt.files[0];
+            
+            if (file && file.type.match('image.*')) {
+                fileInput.files = dt.files;
+                
+                // Trigger change event
+                const event = new Event('change');
+                fileInput.dispatchEvent(event);
+            } else {
+                alert('Please drop an image file');
+            }
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Form submission animation
+        const form = document.getElementById('upload-form');
+        form.addEventListener('submit', function() {
+            if (fileInput.files.length > 0) {
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
+                submitBtn.disabled = true;
+            }
+        });
+
 
 // Add event listeners for drag-and-drop functionality
 uploadArea.addEventListener('dragover', (event) => {
@@ -37,16 +167,6 @@ fileInput.addEventListener('change', () => {
     }
 });
 
-
-
-
-// JavaScript to toggle the mobile menu visibility
-const hamburger = document.getElementById('hamburger');
-const navLinks = document.querySelector('.nav-links');
-
-hamburger.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-});
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize editors

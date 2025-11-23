@@ -1,13 +1,15 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image Format Converter | MediaTools</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <style>
+    <!-- <style>
         :root {
             --primary: #4361ee;
             --secondary: #3f37c9;
@@ -552,7 +554,7 @@
         .form-group{
             display:flex;
         }
-    </style>
+    </style> -->
 </head>
 <body>
     <div class="container">
@@ -563,7 +565,7 @@
             </a>
             
             <div class="nav-links">
-                <a href="{% url 'resizer' %}">Home</a>
+                <a href="{% url 'convert_image' %}">Home</a>
                 <a href="{% url 'resizer' %}">Resizer</a>
                 <a href="{% url 'compress_files' %}">Compress</a>
                 <a href="{% url 'remove-background' %}">Remove BG</a>
@@ -576,7 +578,9 @@
             </div>
             
             <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
+                <i class="fas fa-bars">
+                    =
+                </i>
             </button>
         </nav>
         
@@ -639,138 +643,6 @@
         </footer>
     </div>
 
-    <script>
-        // Mobile menu toggle
-        const menuToggle = document.getElementById('menuToggle');
-        const navLinks = document.querySelector('.nav-links');
-        
-        menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            const icon = menuToggle.querySelector('i');
-            if (navLinks.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!navLinks.contains(e.target) && !menuToggle.contains(e.target) && navLinks.classList.contains('active')) {
-                navLinks.classList.remove('active');
-                menuToggle.querySelector('i').classList.remove('fa-times');
-                menuToggle.querySelector('i').classList.add('fa-bars');
-            }
-        });
-        
-        // File Upload Functionality
-        const uploadArea = document.getElementById('upload-area');
-        const fileInput = document.getElementById('file-input');
-        const submitBtn = document.getElementById('submit-btn');
-        const originalPreview = document.getElementById('original-preview');
-        const convertedPreview = document.getElementById('converted-preview');
-        const originalInfo = document.getElementById('original-info');
-        const convertedInfo = document.getElementById('converted-info');
-        
-        // Click on upload area
-        uploadArea.addEventListener('click', () => {
-            fileInput.click();
-        });
-        
-        // Browse button
-        uploadArea.querySelector('.browse-btn').addEventListener('click', (e) => {
-            e.stopPropagation();
-            fileInput.click();
-        });
-        
-        // File input change
-        fileInput.addEventListener('change', function() {
-            if (this.files && this.files[0]) {
-                const file = this.files[0];
-                
-                // Validate file type
-                if (!file.type.match('image.*')) {
-                    alert('Please select an image file (jpg, png, gif, etc.)');
-                    return;
-                }
-                
-                // Update preview
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    originalPreview.innerHTML = `<img src="${e.target.result}" alt="Original Image">`;
-                    originalInfo.textContent = `${file.name} (${formatFileSize(file.size)})`;
-                    
-                    // Enable submit button
-                    submitBtn.disabled = false;
-                    
-                    // Reset converted preview
-                    convertedPreview.innerHTML = '<div class="placeholder"><i class="fas fa-file-download"></i></div>';
-                    convertedInfo.textContent = 'Converted file will appear here';
-                }
-                
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        // Drag and drop functionality
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, preventDefaults, false);
-        });
-        
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
-        ['dragenter', 'dragover'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, () => {
-                uploadArea.classList.add('drag-over');
-            });
-        });
-        
-        ['dragleave', 'drop'].forEach(eventName => {
-            uploadArea.addEventListener(eventName, () => {
-                uploadArea.classList.remove('drag-over');
-            });
-        });
-        
-        uploadArea.addEventListener('drop', handleDrop);
-        
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const file = dt.files[0];
-            
-            if (file && file.type.match('image.*')) {
-                fileInput.files = dt.files;
-                
-                // Trigger change event
-                const event = new Event('change');
-                fileInput.dispatchEvent(event);
-            } else {
-                alert('Please drop an image file');
-            }
-        }
-        
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // Form submission animation
-        const form = document.getElementById('upload-form');
-        form.addEventListener('submit', function() {
-            if (fileInput.files.length > 0) {
-                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Converting...';
-                submitBtn.disabled = true;
-            }
-        });
-    </script>
+   <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>

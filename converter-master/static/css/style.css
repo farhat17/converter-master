@@ -542,3 +542,10 @@
         }
 
         /* Form Group */
+@media(max-width:768px){
+    .navbar .nav-links{
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+}
